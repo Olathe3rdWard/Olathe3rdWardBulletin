@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Olathe 3rd Ward Bulletin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #E7E0D2;
+    --card: #FBF9F3;
+    --card-border: #D9CEB2;
+    --blue-1: #8093AD;
+    --blue-2: #56698C;
+    --title-bar: #AE8C5E;
+    --title-text: #FBF6EA;
+    --text-dark: #5B4636;
+    --text-mid: #7C6952;
+    --text-muted: #9C8A70;
+    --divider: #D9CBA9;
+    --accent: #7A4A3A;
+  }
+
+  *{ box-sizing: border-box; }
+
+  html{ font-size: clamp(13px, 1.05vw, 21px); }
+
+  body{
+    margin:0;
+    width:100vw;
+    height:100vh;
+    overflow:hidden;
+    background: var(--bg);
+    color: var(--text-dark);
+    font-family:'Lora', serif;
+  }
+
+  h1,h2,h3{ font-family:'Lora', serif; margin:0; }
+
+  .board{
+    height:100vh;
+    width:100vw;
+    display:flex;
+    flex-direction:column;
+  }
+
+  /* ---------- Header ---------- */
+  .masthead{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:1rem;
+    padding: 0.8rem 1.6rem;
+    background: linear-gradient(135deg, var(--blue-1), var(--blue-2));
+    color: var(--title-text);
+  }
+  .masthead .qr-box{
+    display:flex;
+    align-items:center;
+    gap:0.6rem;
+    background: rgba(255,255,255,0.08);
+    padding: 0.4rem 0.7rem;
+    border-radius: 4px;
+  }
+  .masthead .qr-box img{
+    width: clamp(70px,8vw,120px);
+    height: clamp(70px,8vw,120px);
+    background:#fff;
+    padding:3px;
+    flex-shrink:0;
+  }
+  .masthead .qr-box span{
+    font-family:'Work Sans', sans-serif;
+    font-size:0.62rem;
+    font-weight:700;
+    letter-spacing:0.06em;
+    line-height:1.3;
+    max-width:5rem;
+  }
+  .masthead .ward-name{
+    font-size: 2rem;
+    font-weight: 600;
+    text-align:center;
+    flex:1;
+  }
+  .masthead .bulletin-date{
+    text-align:right;
+    font-size: 1rem;
+    font-weight:500;
+    max-width: 14rem;
+  }
+
+  /* ---------- 2x2 grid ---------- */
+  .grid{
+    flex:1;
+    min-height:0;
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 0.9rem;
+    padding: 0.9rem;
+  }
+
+  .card{
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    display:flex;
+    flex-direction:column;
+    min-height:0;
+    overflow:hidden;
+  }
+  .card .title-bar{
+    background: var(--title-bar);
+    color: var(--title-text);
+    text-align:center;
+    padding: 0.5rem;
+    font-size: 1.15rem;
+    font-weight:600;
+    letter-spacing:0.01em;
+    flex-shrink:0;
+  }
+  .card .body{
+    padding: 0.8rem 1.1rem;
+    overflow:hidden;
+    flex:1;
+    min-height:0;
+    display:flex;
+    flex-direction:column;
+  }
+
+  /* ---------- Announcements (date + bullets) ---------- */
+  .ann-row{
+    display:grid;
+    grid-template-columns: 8.5rem 1fr;
+    column-gap: 0.7rem;
+    padding: 0.32rem 0;
+  }
+  .ann-row .date{
+    font-style: italic;
+    color: var(--accent);
+    font-weight:500;
+    white-space:nowrap;
+    border-bottom: 2px dotted var(--divider);
+    padding-bottom: 4px;
+    align-self:start;
+    font-size:0.85rem;
+  }
+  .ann-row .items{ display:flex; flex-direction:column; gap:0.1rem; }
+  .ann-row .items div{
+    position:relative;
+    padding-left: 0.9rem;
+    font-size: 0.82rem;
+    line-height:1.3;
+  }
+  .ann-row .items div::before{
+    content:"•";
+    position:absolute;
+    left:0;
+    color: var(--accent);
+  }
+
+  /* ---------- Today's Program (label ... value) ---------- */
+  .toc-row{
+    display:flex;
+    align-items:baseline;
+    gap:0.5rem;
+    padding: 0.22rem 0;
+  }
+  .toc-row .label{
+    font-style:italic;
+    font-weight:500;
+    white-space:nowrap;
+    font-size:0.85rem;
+  }
+  .toc-row .leader{
+    flex:1 1 auto;
+    border-bottom: 2px dotted var(--divider);
+    margin-bottom:5px;
+    min-width:0.5rem;
+  }
+  .toc-row .value{
+    text-align:right;
+    font-weight:600;
+    font-size:0.85rem;
+    max-width:56%;
+  }
+  .toc-row .value em{ font-style:italic; font-weight:500; }
+
+  /* ---------- Recurring (two columns) ---------- */
+  .rec-cols{
+    flex:1;
+    min-height:0;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    column-gap:1.4rem;
+    overflow:hidden;
+  }
+  .rec-col{ display:flex; flex-direction:column; }
+  .rec-row{ padding: 0.3rem 0; }
+  .rec-row .label{
+    font-style:italic;
+    font-weight:600;
+    font-size:0.82rem;
+    display:block;
+    border-bottom:2px dotted var(--divider);
+    padding-bottom:3px;
+    margin-bottom:0.15rem;
+  }
+  .rec-row .detail{
+    font-size:0.76rem;
+    color: var(--text-mid);
+    line-height:1.3;
+  }
+  .rec-row .link-row{
+    display:flex;
+    align-items:center;
+    gap:0.4rem;
+    margin-top:0.25rem;
+  }
+  .rec-row .link-row img{ width: clamp(70px,8vw,120px); height: clamp(70px,8vw,120px); background:#fff; padding:5px; flex-shrink:0; }
+  .rec-row .link-row a{ font-size:0.7rem; color:var(--accent); word-break:break-all; }
+
+  .contacts-qr{
+    margin-top:auto;
+    padding-top:0.6rem;
+    border-top:1px solid var(--divider);
+    display:flex;
+    align-items:center;
+    gap:0.6rem;
+  }
+  .contacts-qr img{ width: clamp(70px,8vw,120px); height: clamp(70px,8vw,120px); background:#fff; padding:5px; flex-shrink:0; }
+  .contacts-qr span{ font-size:0.68rem; color:var(--text-mid); line-height:1.3; }
+  .contacts-qr a.direct-link{ display:block; font-size:0.65rem; color:var(--accent); word-break:break-all; margin-top:0.2rem; }
+
+  /* ---------- Missionary Dinner Calendar ---------- */
+  .cal-body{
+    flex:1;
+    min-height:0;
+    display:grid;
+    grid-template-columns: auto 1fr;
+    gap:1rem;
+  }
+  .cal-signup{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:0.5rem;
+    text-align:center;
+    padding:0.4rem 0.8rem;
+  }
+  .cal-signup p{ margin:0; font-size:0.78rem; color:var(--text-mid); max-width:8rem; }
+  .cal-signup a.direct-link{ font-size:0.7rem; color:var(--accent); word-break:break-all; max-width:8rem; }
+  .cal-signup img{ width: clamp(70px,8vw,120px); height: clamp(70px,8vw,120px); background:#fff; padding:5px; }
+  .cal-wrap{ position:relative; min-height:0; background:#fff; border:1px solid var(--card-border); }
+  .cal-wrap iframe{ width:100%; height:100%; border:0; display:block; }
+  .cal-placeholder{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    text-align:center; padding:1rem; font-size:0.78rem; color:var(--text-mid);
+  }
+
+  @media (max-width: 900px){
+    body{ overflow:auto; height:auto; }
+    .board{ height:auto; }
+    .grid{ grid-template-columns:1fr; grid-template-rows:none; }
+    .rec-cols{ grid-template-columns:1fr; }
+    .cal-body{ grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="board">
+  <header class="masthead">
+    <div class="qr-box">
+      <img id="accessQr" alt="QR code to view this board on your phone">
+      <span>ACCESS ON YOUR PHONE</span>
+    </div>
+    <div class="ward-name" id="wardName"></div>
+    <div class="bulletin-date" id="bulletinDate"></div>
+  </header>
+
+  <div class="grid">
+    <section class="card program">
+      <div class="title-bar">Today's Program</div>
+      <div class="body" id="programBody"></div>
+    </section>
+
+    <section class="card announcements">
+      <div class="title-bar">Announcements</div>
+      <div class="body" id="announcementsBody"></div>
+    </section>
+
+    <section class="card calendar">
+      <div class="title-bar">Missionary Dinner Calendar</div>
+      <div class="body">
+        <div class="cal-body">
+          <div class="cal-signup">
+            <img id="signupQr" alt="QR code to sign up to feed the missionaries">
+            <p id="signupLabel"></p>
+            <a class="direct-link" id="signupLink" target="_blank" rel="noopener"></a>
+          </div>
+          <div class="cal-wrap" id="calWrap"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card recurring">
+      <div class="title-bar">Recurring Announcements</div>
+      <div class="body">
+        <div class="rec-cols" id="recurringBody"></div>
+        <div class="contacts-qr" id="contactsQrBlock"></div>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<script>
+/* =========================================================================
+   HOW TO UPDATE THIS BOARD EACH WEEK
+   Edit only the values inside the DATA object below.
+   ========================================================================= */
+
+const DATA = {
+  wardName: "Olathe 3rd Ward",
+
+  // QR code top-left, linking back to this same page so people can view it on their phone.
+  accessUrl: "https://Olathe3rdWard.github.io/Olathe3rdWardBulletin/",
+
+  // QR code linking to the secondary Contacts & Missionaries page.
+  contactsPage: {
+    enabled: true,
+    url: "https://Olathe3rdWard.github.io/Olathe3rdWardBulletin/contacts.html",
+    label: "Scan for phone numbers & missionary addresses"
+  },
+
+  // ---- Announcements (chronological) -------------------------------------
+  // Each entry is one date with one or more bullet lines.
+  announcements: [
+    { date: "Tuesday Sep 15", items: ["No Youth Activities (Temple Trip on Saturday)"] },
+    { date: "Friday Sep 18-19", items: ["9:00 AM - 1:00 PM - Olathe Women's Conference"] },
+    { date: "Saturday Sep 19", items: ["Noon - OL3 Youth Temple Trip"] },
+    { date: "Saturday Sep 26", items: ["2:00 PM - 3:00 PM - OL3 Primary Program Practice"] },
+    { date: "Sunday Sep 27", items: ["OL3 Primary Program"] },
+    { date: "Saturday Oct 3", items: [
+        "11:00 AM - 1:00 PM - General Conference Saturday Morning Session",
+        "3:00 PM - 5:00 PM - General Conference Saturday Afternoon Session"
+      ]
+    },
+    { date: "Sunday Oct 4", items: [
+        "11:00 AM - 1:00 PM - General Conference Sunday Morning Session",
+        "3:00 PM - 5:00 PM - General Conference Sunday Afternoon Session"
+      ]
+    },
+    { date: "Saturday Oct 10", items: ["Adam Cheney Baptism"] }
+  ],
+
+  // ---- Today's Program (Sacrament Meeting) -------------------------------
+  // Leave value "" to show a blank line. Wrap a title in <em>...</em> for italics.
+  program: [
+    { label: "Opening Hymn",                  value: "#1070 - <em>The Miracle</em>" },
+    { label: "Invocation",                    value: "Sister Elena Gudjenov" },
+    { label: "Stake Business",                value: "" },
+    { label: "Sacrament Hymn",                value: "#1007 - <em>As Bread Is Broken</em>" },
+    { label: "Administration of the Sacrament", value: "" },
+    { label: "Speaker / Youth Speaker",       value: "Jackson Reynolds" },
+    { label: "Speaker",                       value: "Sister Brittany Cybulski" },
+    { label: "Intermediate Hymn",             value: "<em>Teach Me to Walk in the Light</em> — Jenny Reyolds, acc. Sara Ebert on Piano" },
+    { label: "Speaker",                       value: "Sister Diane Thompson" },
+    { label: "Speaker",                       value: "Brother Matthew Jackson" },
+    { label: "Closing Hymn",                  value: "#1001 - <em>Come, Thou Fount of Every Blessing</em>" },
+    { label: "Benediction",                   value: "Brother Bill Jones" }
+  ],
+
+  // ---- Recurring (two columns) -------------------------------------------
+  recurringLeft: [
+    { label: "Youth Activity", detail: "Tuesday at 6:50pm; YM:    YW:    " },
+    { label: "Primary Activity", detail: "1st & 3rd Tuesday at 6:50pm — Boys & Girls" },
+    { label: "Ward Choir Practice", detail: "Sunday 2:30 PM at the Henrie's" },
+    { label: "Adult Religion Class", detail: "Thursday at 10:00 AM; Thursday at 7:00 PM — taught by Kreig and Sherry Smith via Zoom. Email sssmithARC@aol.com to join." }
+  ],
+  recurringRight: [
+    { label: "Sacrament Meeting", detail: "Sunday 10:30 AM — join via Zoom", link: "https://zoom.us/j/94976206793" },
+    { label: "Stake Youth Leadership", detail: "Select Sundays, 5:00–6:00 PM" },
+    { label: "Ward Youth Council", detail: "3rd Sundays 12:30 PM in the High Council Room" }
+  ],
+
+  // ---- Missionary Dinner Calendar ----------------------------------------
+  feedMissionaries: {
+    signupUrl: "https://olathe3rd.missionarydinnercalendar.com/",
+    signupLabel: "Sign up to feed the missionaries. Password: alma",
+    calendarEmbedUrl: "https://olathe3rd.missionarydinnercalendar.com/"
+  }
+};
+
+/* ========================= Rendering — no need to edit below ========================= */
+
+document.getElementById('wardName').textContent = DATA.wardName;
+
+// Auto-computed "Bulletin for <Day>, <Month> <date>, <year>"
+(function(){
+  const now = new Date();
+  const day = now.getDay(); // 0 = Sunday
+  const daysUntilSunday = (7 - day) % 7;
+  const sunday = new Date(now);
+  sunday.setDate(now.getDate() + daysUntilSunday);
+  const WEEKDAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+  const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+  const nth = n => {
+    const s = ["th","st","nd","rd"], v = n % 100;
+    return n + (s[(v-20)%10] || s[v] || s[0]);
+  };
+  const label = "Bulletin for " + WEEKDAYS[sunday.getDay()] + ", " + MONTHS[sunday.getMonth()] + " " + nth(sunday.getDate()) + ", " + sunday.getFullYear();
+  document.getElementById('bulletinDate').textContent = label;
+})();
+
+// Access QR (top-left)
+document.getElementById('accessQr').src =
+  'https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=0&data=' + encodeURIComponent(DATA.accessUrl);
+
+// Announcements
+const annBody = document.getElementById('announcementsBody');
+DATA.announcements.forEach(entry => {
+  const row = document.createElement('div');
+  row.className = 'ann-row';
+  row.innerHTML =
+    '<div class="date">' + entry.date + '</div>' +
+    '<div class="items">' + entry.items.map(i => '<div>' + i + '</div>').join('') + '</div>';
+  annBody.appendChild(row);
+});
+
+// Today's Program
+const progBody = document.getElementById('programBody');
+DATA.program.forEach(row => {
+  const div = document.createElement('div');
+  div.className = 'toc-row';
+  div.innerHTML =
+    '<span class="label">' + row.label + '</span>' +
+    '<span class="leader"></span>' +
+    '<span class="value">' + (row.value || '—') + '</span>';
+  progBody.appendChild(div);
+});
+
+// Recurring (two columns)
+function renderRecCol(items){
+  const col = document.createElement('div');
+  col.className = 'rec-col';
+  items.forEach(item => {
+    const row = document.createElement('div');
+    row.className = 'rec-row';
+    let linkHtml = '';
+    if (item.link) {
+      const qrSrc = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=0&data=' + encodeURIComponent(item.link);
+      linkHtml = '<div class="link-row"><img src="' + qrSrc + '" alt="QR code"><a href="' + item.link + '" target="_blank" rel="noopener">' + item.link + '</a></div>';
+    }
+    row.innerHTML =
+      '<span class="label">' + item.label + '</span>' +
+      '<div class="detail">' + item.detail + '</div>' + linkHtml;
+    col.appendChild(row);
+  });
+  return col;
+}
+const recurringBody = document.getElementById('recurringBody');
+recurringBody.appendChild(renderRecCol(DATA.recurringLeft));
+recurringBody.appendChild(renderRecCol(DATA.recurringRight));
+
+// Contacts QR (bottom of Recurring panel)
+const contactsQrBlock = document.getElementById('contactsQrBlock');
+if (DATA.contactsPage && DATA.contactsPage.enabled) {
+  const qrSrc = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=0&data=' + encodeURIComponent(DATA.contactsPage.url);
+  contactsQrBlock.innerHTML =
+    '<img src="' + qrSrc + '" alt="QR code for contacts and missionaries">' +
+    '<span>' + DATA.contactsPage.label + '<a class="direct-link" href="' + DATA.contactsPage.url + '" target="_blank" rel="noopener">' + DATA.contactsPage.url + '</a></span>';
+}
+
+// Missionary Dinner Calendar
+document.getElementById('signupQr').src =
+  'https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=0&data=' + encodeURIComponent(DATA.feedMissionaries.signupUrl);
+document.getElementById('signupLabel').textContent = DATA.feedMissionaries.signupLabel;
+const signupLink = document.getElementById('signupLink');
+signupLink.href = DATA.feedMissionaries.signupUrl;
+signupLink.textContent = DATA.feedMissionaries.signupUrl;
+
+const calWrap = document.getElementById('calWrap');
+if (DATA.feedMissionaries.calendarEmbedUrl) {
+  calWrap.innerHTML = '<iframe src="' + DATA.feedMissionaries.calendarEmbedUrl + '"></iframe>';
+} else {
+  calWrap.innerHTML = '<div class="cal-placeholder">Add your calendar embed link to <strong>calendarEmbedUrl</strong> to show it here.</div>';
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Olathe 3rd Ward — Contacts & Missionaries</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #E7E0D2;
+    --card: #FBF9F3;
+    --card-border: #D9CEB2;
+    --blue-1: #8093AD;
+    --blue-2: #56698C;
+    --title-bar: #AE8C5E;
+    --title-text: #FBF6EA;
+    --text-dark: #5B4636;
+    --text-mid: #7C6952;
+    --divider: #D9CBA9;
+  }
+  *{ box-sizing:border-box; }
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--text-dark);
+    font-family:'Lora', serif;
+    padding-bottom: 3rem;
+  }
+  header{
+    background: linear-gradient(135deg, var(--blue-1), var(--blue-2));
+    color: var(--title-text);
+    padding: 1.4rem 1.2rem;
+    text-align:center;
+  }
+  header h1{ margin:0; font-size:1.6rem; font-weight:600; }
+  header p{ margin:0.3rem 0 0; font-size:0.9rem; opacity:0.9; }
+
+  main{ max-width: 720px; margin: 1.4rem auto; padding: 0 1rem; }
+
+  .card{
+    background: var(--card);
+    border:1px solid var(--card-border);
+    margin-bottom: 1.4rem;
+  }
+  .card .title-bar{
+    background: var(--title-bar);
+    color: var(--title-text);
+    text-align:center;
+    padding:0.6rem;
+    font-size:1.2rem;
+    font-weight:600;
+  }
+  .card .body{ padding: 0.9rem 1.2rem; }
+
+  .phone-entry{
+    padding:0.55rem 0;
+    border-bottom:1px solid var(--divider);
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    flex-wrap:wrap;
+    gap:0.3rem;
+  }
+  .phone-entry:last-child{ border-bottom:none; }
+  .phone-entry .who{}
+  .phone-entry .role{ font-style:italic; font-size:0.8rem; color: var(--text-mid); display:block; }
+  .phone-entry .name{ font-weight:600; font-size:1rem; }
+  .phone-entry .numbers{ font-size:0.95rem; color: var(--text-dark); font-variant-numeric: tabular-nums; text-align:right; }
+  .phone-entry .numbers .tag{ font-size:0.75rem; color:var(--text-mid); }
+
+  .miss-card{
+    padding: 0.7rem 0.9rem;
+    border-left: 4px solid var(--title-bar);
+    background: rgba(174,140,94,0.06);
+    margin-bottom: 0.8rem;
+  }
+  .miss-card:last-child{ margin-bottom:0; }
+  .miss-card .name{ font-weight:600; font-size:1.05rem; margin-bottom:0.2rem; }
+  .miss-card .line{ font-size:0.88rem; color: var(--text-mid); line-height:1.4; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1 id="wardName"></h1>
+  <p>Contacts &amp; Missionaries Serving</p>
+</header>
+
+<main>
+  <section class="card">
+    <div class="title-bar">Important Phone Numbers</div>
+    <div class="body" id="phoneBody"></div>
+  </section>
+
+  <section class="card">
+    <div class="title-bar">Write Our Missionaries</div>
+    <div class="body" id="missionariesBody"></div>
+  </section>
+</main>
+
+<script>
+/* Edit only the values inside DATA below to update this page. */
+const DATA = {
+  wardName: "Olathe 3rd Ward",
+
+  phoneNumbers: [
+    { role: "Bishop", name: "Justin Sirois", numbers: [{ number: "913-440-4135" }] },
+    { role: "First Counselor", name: "Addison Wilson", numbers: [{ number: "254-498-4666" }] },
+    { role: "Second Counselor", name: "Andy Ebert", numbers: [{ number: "913-205-5740" }] },
+    { role: "EQ President", name: "Swede Young", numbers: [{ number: "913-325-9275" }] },
+    { role: "RS President", name: "Elena Gudjenov", numbers: [{ number: "913-605-2533" }] },
+    { role: "Primary President", name: "Fay Woods", numbers: [{ number: "913-980-8943" }] },
+    { role: "YW President", name: "Molly Gudjenov", numbers: [{ number: "913-388-5830" }] },
+    { role: "Sunday School President", name: "Travis Roe", numbers: [{ number: "208-521-8904" }] },
+    { role: "Ward Mission Leader", name: "David Jarman", numbers: [{ number: "913-424-5806" }] },
+    { role: "Ward Clerk", name: "Mark Andersen", numbers: [{ number: "913-839-1278" }] },
+    { role: "Executive Secretary", name: "Bruce Jenson", numbers: [{ number: "913-980-6704" }] },
+    { role: "Missionaries", name: "", numbers: [
+        { number: "913-405-4727", tag: "English" },
+        { number: "913-605-9098", tag: "ASL" }
+      ]
+    },
+    { role: "Stake Executive Secretary", name: "Brett Mitchell", numbers: [{ number: "913-284-8300" }] }
+  ],
+
+  missionaries: [
+    { name: "Elder Ethan Lake", lines: ["California Roseville Mission", "5930 Granite Lake Drive Ste. 110", "Granite Bay, CA 95746"] },
+    { name: "Elder Nathan Cheney", lines: ["Utah Spanish Fork Mission", "1158 East 1240 South #101", "Spanish Fork, UT 84660"] },
+    { name: "Elder Matthew Terry", lines: ["Rua Doutor Pedro Melo Cahú, 104", "Boa Viagem", "51020-080 Recife - PE", "BRASIL"] }
+  ]
+};
+
+document.getElementById('wardName').textContent = DATA.wardName;
+
+const phoneBody = document.getElementById('phoneBody');
+DATA.phoneNumbers.forEach(entry => {
+  const div = document.createElement('div');
+  div.className = 'phone-entry';
+  const numbersHtml = entry.numbers.map(n =>
+    n.tag ? '<span class="tag">' + n.tag + ' </span>' + n.number : n.number
+  ).join('<br>');
+  div.innerHTML =
+    '<div class="who"><span class="role">' + entry.role + '</span>' +
+    (entry.name ? '<span class="name">' + entry.name + '</span>' : '') + '</div>' +
+    '<div class="numbers">' + numbersHtml + '</div>';
+  phoneBody.appendChild(div);
+});
+
+const missBody = document.getElementById('missionariesBody');
+DATA.missionaries.forEach(m => {
+  const div = document.createElement('div');
+  div.className = 'miss-card';
+  div.innerHTML = '<div class="name">' + m.name + '</div>' + m.lines.map(l => '<div class="line">' + l + '</div>').join('');
+  missBody.appendChild(div);
+});
+</script>
+
+</body>
+</html>
